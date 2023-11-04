@@ -1,0 +1,9 @@
+const datosUbicacion = [
+    { tipo: 'CABA', factor: 1.13 },
+    { tipo: 'Tandil', factor: 1.04 },
+    { tipo: 'Costa Atlántica', factor: 1.29 },
+    { tipo: 'Patagonia', factor: 1.00 },
+  ];
+  
+  export default datosUbicacion;
+  
