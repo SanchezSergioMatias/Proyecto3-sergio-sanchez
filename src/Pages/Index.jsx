@@ -1,27 +1,41 @@
-import React, { useState } from 'react';
-import datosUbicacion from './DatosUbicacion';  // Importar datos de ubicación
-import datosPropiedad from './DatosPropiedad';  // Importar datos de propiedad
+import { useState } from 'react';
+import datosUbicacion from './DatosUbicacion';
+import datosPropiedad from './DatosPropiedad';
+import Swal from 'sweetalert2';
 
 const costoM2 = 35.86;
 
 export default function Index() {
-  const [selectedPropiedad, setSelectedPropiedad] = useState("");
-  const [selectedUbicacion, setSelectedUbicacion] = useState("");
+  const [selectedPropiedad, setSelectedPropiedad] = useState('');
+  const [selectedUbicacion, setSelectedUbicacion] = useState('');
   const [metrosCuadrados, setMetrosCuadrados] = useState(20);
   const [cotizado, setCotizado] = useState(false);
   const [cotizacion, setCotizacion] = useState(0);
 
   const cotizar = () => {
-    const factorPropiedad = datosPropiedad.find((propiedad) => propiedad.tipo === selectedPropiedad)?.factor || 1;
-    const factorUbicacion = datosUbicacion.find((ubicacion) => ubicacion.tipo === selectedUbicacion)?.factor || 1;
-    const precioEstimado = costoM2 * metrosCuadrados * factorPropiedad * factorUbicacion;
+    if (!selectedPropiedad || !selectedUbicacion || !metrosCuadrados) {
+
+      Swal.fire('', 'Debes completar todos los datos en pantalla.', 'warning');
+      return;
+    }
+
+    const factorPropiedad = datosPropiedad.find(
+      (propiedad) => propiedad.tipo === selectedPropiedad
+    )?.factor || 1;
+    const factorUbicacion = datosUbicacion.find(
+      (ubicacion) => ubicacion.tipo === selectedUbicacion
+    )?.factor || 1;
+    const precioEstimado =
+      costoM2 * metrosCuadrados * factorPropiedad * factorUbicacion;
 
     setCotizacion(precioEstimado.toFixed(2));
     setCotizado(true);
+
+    Swal.fire('', 'Cotización realizada con éxito.', 'success');
   };
 
   const guardarEnHistorial = () => {
-    const historial = JSON.parse(localStorage.getItem("historial")) || [];
+    const historial = JSON.parse(localStorage.getItem('historial')) || [];
     const nuevaCotizacion = {
       fecha: new Date().toLocaleString(),
       propiedad: selectedPropiedad,
@@ -30,7 +44,14 @@ export default function Index() {
       precio: cotizacion,
     };
     historial.push(nuevaCotizacion);
-    localStorage.setItem("historial", JSON.stringify(historial));
+    localStorage.setItem('historial', JSON.stringify(historial));
+
+
+    toast();
+  };
+
+  const toast = () => {
+    Swal.fire('Cotización guardada.', '', 'success');
   };
 
   return (
@@ -89,7 +110,11 @@ export default function Index() {
             Cotizar
           </button>
           {cotizado && (
-            <span className="guardar" title="Guardar en historial" onClick={guardarEnHistorial}>
+            <span
+              className="guardar"
+              title="Guardar en historial"
+              onClick={guardarEnHistorial}
+            >
               💾
             </span>
           )}
@@ -106,6 +131,9 @@ export default function Index() {
     </div>
   );
 }
+
+
+
 
 
 

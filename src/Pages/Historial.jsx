@@ -1,13 +1,37 @@
-import React, { useState } from "react";
-
-// Resto del código del componente Index...
+import { useState } from "react";
+import Swal from 'sweetalert2';
 
 export default function Historial() {
   const [historial, setHistorial] = useState(JSON.parse(localStorage.getItem("historial")) || []);
 
   const borrarHistorial = () => {
-    localStorage.removeItem("historial");
-    setHistorial([]); // Actualiza el estado del historial
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'No podrás revertir esta acción.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, borrar historial',
+      cancelButtonText: 'No, cancelar',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        localStorage.removeItem("historial");
+        setHistorial([]);
+        Swal.fire(
+          'Borrado',
+          'Tu historial ha sido eliminado.',
+          'success'
+        );
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+
+        Swal.fire(
+          'Cancelado',
+          'Tu historial está a salvo :)',
+          'error'
+        );
+      }
+    });
   };
 
   return (
